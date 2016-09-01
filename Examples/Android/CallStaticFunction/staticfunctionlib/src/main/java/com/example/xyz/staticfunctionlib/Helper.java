@@ -10,7 +10,8 @@ public class Helper {
      */
     public static String DoSthInAndroid() {
 
-        return "Hi, Sth is done in Android";
+		return "return path list of local dcim, and in ugui or ngui of unity, caching 5 slots with scrollview";
+        //return "Hi, Sth is done in Android";
     }
 }
 

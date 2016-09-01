@@ -29,8 +29,10 @@ public class CallStaticFunctions : MonoBehaviour {
 
     void OnGUI()
     {
-        if(GUILayout.Button("Next Level"))
-            LoadNextLevel();
+        if (GUILayout.Button("github://proprieties/pickit", GUILayout.Width(200), GUILayout.Height(100)))
+            Application.OpenURL("https://github.com/proprieties/Use-Android-Inside-Unity");
+        //if (GUILayout.Button("Next Level"))
+        //    LoadNextLevel();
     }
 
     public void LoadNextLevel()
