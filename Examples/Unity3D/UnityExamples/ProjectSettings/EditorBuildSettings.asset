@@ -6,6 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/03ShowImage.unity
+  - enabled: 1
     path: Assets/01CallStaticAndroidFunction.unity
   - enabled: 1
     path: Assets/02InjectSimpleAndroidUI.unity

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CallStaticFunctions : MonoBehaviour {
@@ -27,8 +27,14 @@ public class CallStaticFunctions : MonoBehaviour {
 
     }
 
+    void OnGUI()
+    {
+        if(GUILayout.Button("Next Level"))
+            LoadNextLevel();
+    }
+
     public void LoadNextLevel()
     {
-        SceneManager.LoadScene("02InjectSimpleAndroidUI");
+        Application.LoadLevel("02InjectSimpleAndroidUI");
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 
 public class InjectSimpleAndroidUI : MonoBehaviour {
 
@@ -24,6 +24,6 @@ public class InjectSimpleAndroidUI : MonoBehaviour {
 
     public void LoadPreviousLevel()
     {
-        SceneManager.LoadScene("01CallStaticAndroidFunction");
+        Application.LoadLevel("01CallStaticAndroidFunction");
     }
 }
