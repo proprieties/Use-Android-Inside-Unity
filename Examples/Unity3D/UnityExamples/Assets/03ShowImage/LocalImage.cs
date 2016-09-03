@@ -20,7 +20,7 @@ public class LocalImage : MonoBehaviour
         //renderSpr = this.gameObject.AddComponent<SpriteRenderer>();
         //renderSpr.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
 
-        StartCoroutine(LoadTex(value => idxCurrent = value, OnCompleteLoad));
+        StartCoroutine(LoadTex(value => idxCurrent = value, OnCompleteLoad, OnFailedLoad));
 
     }
 
@@ -40,20 +40,51 @@ public class LocalImage : MonoBehaviour
         }
     }
 
-    IEnumerator<int> LoadTex(Action<int> result, Action complete, int idx = 0)
+    IEnumerator<int> LoadTex(Action<int> result, Action complete, Action failed, int idx = 0)
     {
         idx = idx >= PathExternalImage.Count ? 0 : idx;
-        w = new WWW(PathExternalImage[idx]);
-        result(idx);
-        yield return idx;
 
+        try
+        {
+            w = new WWW(PathExternalImage[idx]);
+        }
+        catch(Exception genErr)
+        {
+            Debug.LogError(genErr.ToString());
+            failed();
+            yield break;
+        }
+
+        if (w == null)
+        {
+            failed();
+            yield break;
+        }
+
+        yield return idx;
+        result(idx);
         complete();
+
+        if (w != null)
+        {
+            w.Dispose();
+            w = null;
+        }
+    }
+
+    void OnFailedLoad()
+    {
+        Debug.LogError("Image Load Failed");
     }
 
     void OnCompleteLoad()
     {
         tex = w.texture;
         //tex.Apply();
+        rawImg.transform.localPosition = Vector3.zero;
+        sizeOrigin.x = Screen.height * tex.width / tex.height;
+        sizeOrigin.y = Screen.height;
+        sizeZoom = 1f;
         rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.height * tex.width / tex.height);
         rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height);
         rawImg.texture = w.texture;
@@ -61,17 +92,28 @@ public class LocalImage : MonoBehaviour
 
     void Update()
     {
-        if (w.isDone)
+        if (w != null && w.isDone)
         {
             Debug.Log("done");
         }
     }
 
-    void Zoom(float z)
+    public void Move(float x, float y)
     {
+        rawImg.rectTransform.localPosition += new Vector3(x, y);
+    }
+
+    Vector2 sizeOrigin;
+    float sizeZoom = 1f;
+    public void Zoom(float z)
+    {
+        sizeZoom += z;
+        if (sizeZoom < 0) sizeZoom = 0;
+        Debug.LogError(z + " : " + sizeZoom);
+        //size = size > 0 ? 1.5f : 0.5f;
         //rawImg.rectTransform.sizeDelta.Scale(Vector2.one * z);
-        rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rawImg.rectTransform.rect.width * z);
-        rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rawImg.rectTransform.rect.height * z);
+        rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sizeOrigin.x * sizeZoom);
+        rawImg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, sizeOrigin.y * sizeZoom);
     }
 
     void OnGUI()
@@ -79,11 +121,7 @@ public class LocalImage : MonoBehaviour
         if (GUILayout.Button("github://proprieties/pickit", GUILayout.Width(200), GUILayout.Height(100)))
             Application.OpenURL("https://github.com/proprieties/Use-Android-Inside-Unity");
         if (GUILayout.Button("Next Image", GUILayout.Width(200), GUILayout.Height(100)))
-            StartCoroutine(LoadTex(value => idxCurrent = value, OnCompleteLoad, ++idxCurrent));
-        if (GUILayout.Button("Zoom In", GUILayout.Width(200), GUILayout.Height(100)))
-            Zoom(1.5f);
-        if (GUILayout.Button("Zoom Out", GUILayout.Width(200), GUILayout.Height(100)))
-            Zoom(0.5f);
+            StartCoroutine(LoadTex(value => idxCurrent = value, OnCompleteLoad, OnFailedLoad, ++idxCurrent));
         if (GUILayout.Button("Get Path Test", GUILayout.Width(200), GUILayout.Height(100)))
             CallStaticFunctions.GetPath();
         //if (GUILayout.Button("Next Level"))

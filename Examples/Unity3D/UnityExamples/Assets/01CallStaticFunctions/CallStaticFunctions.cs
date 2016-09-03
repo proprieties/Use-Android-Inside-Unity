@@ -62,6 +62,7 @@ public class CallStaticFunctions : MonoBehaviour {
         catch (System.Exception e)
         {
             // do something with error...
+            Debug.LogError(e.ToString());
         }
 
         return results;
@@ -87,7 +88,7 @@ public class CallStaticFunctions : MonoBehaviour {
 		{
             var ajc = new AndroidJavaClass("com.example.xyz.staticfunctionlib.Helper"); //(1)
 
-            AndroidJavaClass jo = new AndroidJavaClass("android.provider.MediaStore.Images.Media");
+//!            AndroidJavaClass jo = new AndroidJavaClass("android.provider.MediaStore.Images.Media");
             AndroidJavaClass up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject>("currentActivity");
             AndroidJavaObject contentResolver = currentActivity.Call<AndroidJavaObject>("getContentResolver");
